@@ -4,6 +4,8 @@ import com.marcoscouto.entities.Movie;
 import com.marcoscouto.entities.Rental;
 import com.marcoscouto.entities.User;
 import com.marcoscouto.utils.DateUtils;
+import org.junit.Assert;
+import org.junit.Test;
 
 import java.util.Date;
 
@@ -29,7 +31,8 @@ public class RentalService {
         return rental;
     }
 
-    public static void main(String[] args) {
+    @Test
+    public void test() {
 
         //Cenário
         RentalService rs = new RentalService();
@@ -48,10 +51,9 @@ public class RentalService {
 
         //Verificação
 
-        System.out.println(rental.getPrice() == 14.9);
-        System.out.println(DateUtils.isSameDate(rental.getInitialDate(), new Date()));
-        System.out.println(DateUtils.isSameDate(rental.getFinalDate(), DateUtils.obtaingDateWithDaysDifference(1)));
-
+        Assert.assertTrue(rental.getPrice() == 14.9);
+        Assert.assertTrue(DateUtils.isSameDate(rental.getInitialDate(), new Date()));
+        Assert.assertTrue(DateUtils.isSameDate(rental.getFinalDate(), DateUtils.obtaingDateWithDaysDifference(1)));
 
     }
 
