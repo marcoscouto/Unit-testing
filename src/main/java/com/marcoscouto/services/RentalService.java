@@ -13,7 +13,10 @@ import static com.marcoscouto.utils.DateUtils.addDays;
 
 public class RentalService {
 
-    public Rental rentMovie(User user, Movie movie) {
+    public Rental rentMovie(User user, Movie movie) throws Exception {
+
+        if (movie.getStock() == 0) throw new Exception("Film without stock");
+
         Rental rental = new Rental();
         rental.setMovie(movie);
         rental.setUser(user);
