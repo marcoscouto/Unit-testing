@@ -13,8 +13,6 @@ import static com.marcoscouto.utils.DateUtils.addDays;
 
 public class RentalService {
 
-
-
     public Rental rentMovie(User user, Movie movie) {
         Rental rental = new Rental();
         rental.setMovie(movie);
