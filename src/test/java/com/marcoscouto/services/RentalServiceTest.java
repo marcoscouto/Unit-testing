@@ -7,9 +7,7 @@ import com.marcoscouto.exceptions.MovieWithoutStockException;
 import com.marcoscouto.exceptions.RentalException;
 import com.marcoscouto.utils.DateUtils;
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
@@ -17,18 +15,38 @@ import java.util.Date;
 
 public class RentalServiceTest {
 
+    private RentalService rs;
+
     @Rule
     public ErrorCollector errorCollector = new ErrorCollector();
 
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
+    @Before
+    public void setup(){
+        rs = new RentalService();
+    }
+
+    @After
+    public void tearDown(){
+//        System.out.println("After");
+    }
+
+    @BeforeClass
+    public static void setupClass(){
+//        System.out.println("Before Class");
+    }
+
+    @AfterClass
+    public static void tearDownClass(){
+//        System.out.println("After Class");
+    }
+
     @Test
     public void test() throws Exception {
 
         //Cenário
-        RentalService rs = new RentalService();
-
         User u = new User();
         u.setName("Marcos");
 
@@ -53,8 +71,6 @@ public class RentalServiceTest {
     public void rentalTest_movieWithoutStock() throws Exception {
 
         //Cenário
-        RentalService rs = new RentalService();
-
         User u = new User();
         u.setName("Marcos");
 
@@ -66,17 +82,12 @@ public class RentalServiceTest {
         //Ação
 
         rs.rentMovie(u, m);
-
-        System.out.println("Forma Elegante");
-
     }
 
     @Test // Forma Robusta
     public void rentalTest_movieWithoutStock2() {
 
         //Cenário
-        RentalService rs = new RentalService();
-
         User u = new User();
         u.setName("Marcos");
 
@@ -93,17 +104,12 @@ public class RentalServiceTest {
         } catch (Exception e) {
             Assert.assertThat(e.getMessage(), CoreMatchers.is("Film without stock"));
         }
-
-        System.out.println("Forma Robusta");
-
     }
 
     @Test // Forma Nova
     public void rentalTest_movieWithoutStock3() throws Exception {
 
         //Cenário
-        RentalService rs = new RentalService();
-
         User u = new User();
         u.setName("Marcos");
 
@@ -117,17 +123,12 @@ public class RentalServiceTest {
 
         //Ação
         rs.rentMovie(u, m);
-
-        System.out.println("Forma Nova");
-
-
     }
 
     @Test
     public void rentalTest_userNotFound() throws MovieWithoutStockException {
-        //Cenário
-        RentalService rs = new RentalService();
 
+        //Cenário
         Movie m = new Movie();
         m.setName("A volta dos que não foram");
         m.setStock(1);
@@ -149,8 +150,6 @@ public class RentalServiceTest {
     public void rentalTest_movieNotFound() throws MovieWithoutStockException, RentalException {
 
         //Cenário
-        RentalService rs = new RentalService();
-
 //        Movie m = new Movie();
 //        m.setName("A volta dos que não foram");
 //        m.setStock(1);
