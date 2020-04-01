@@ -5,9 +5,6 @@ import com.marcoscouto.entities.Rental;
 import com.marcoscouto.entities.User;
 import com.marcoscouto.exceptions.MovieWithoutStockException;
 import com.marcoscouto.exceptions.RentalException;
-import com.marcoscouto.utils.DateUtils;
-import org.junit.Assert;
-import org.junit.Test;
 
 import java.util.Date;
 import java.util.List;
@@ -31,7 +28,19 @@ public class RentalService {
         rental.setMovies(movies);
         rental.setUser(user);
         rental.setInitialDate(new Date());
-        rental.setPrice(movies.stream().mapToDouble(x -> x.getPrice()).sum());
+        double price = 0;
+        int i = 0;
+        for (Movie movie : movies) {
+            switch (i) {
+                case 2: price += movie.getPrice() * 0.75; break;
+                case 3: price += movie.getPrice() * 0.50; break;
+                case 4: price += movie.getPrice() * 0.25; break;
+                case 5: price += 0; break;
+                default: price += movie.getPrice();
+            }
+            i++;
+        }
+        rental.setPrice(price);
 
         //Entrega no dia seguinte
         Date returnDate = new Date();
