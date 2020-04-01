@@ -3,6 +3,8 @@ package com.marcoscouto.services;
 import com.marcoscouto.entities.Movie;
 import com.marcoscouto.entities.Rental;
 import com.marcoscouto.entities.User;
+import com.marcoscouto.exceptions.MovieWithoutStockException;
+import com.marcoscouto.exceptions.RentalException;
 import com.marcoscouto.utils.DateUtils;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
@@ -47,7 +49,7 @@ public class RentalServiceTest {
 
     }
 
-    @Test(expected = Exception.class)
+    @Test(expected = MovieWithoutStockException.class) // Forma Elegante
     public void rentalTest_movieWithoutStock() throws Exception {
 
         //Cenário
@@ -65,9 +67,11 @@ public class RentalServiceTest {
 
         rs.rentMovie(u, m);
 
+        System.out.println("Forma Elegante");
+
     }
 
-    @Test
+    @Test // Forma Robusta
     public void rentalTest_movieWithoutStock2() {
 
         //Cenário
@@ -90,9 +94,11 @@ public class RentalServiceTest {
             Assert.assertThat(e.getMessage(), CoreMatchers.is("Film without stock"));
         }
 
+        System.out.println("Forma Robusta");
+
     }
 
-    @Test
+    @Test // Forma Nova
     public void rentalTest_movieWithoutStock3() throws Exception {
 
         //Cenário
@@ -112,6 +118,51 @@ public class RentalServiceTest {
         //Ação
         rs.rentMovie(u, m);
 
+        System.out.println("Forma Nova");
 
+
+    }
+
+    @Test
+    public void rentalTest_userNotFound() throws MovieWithoutStockException {
+        //Cenário
+        RentalService rs = new RentalService();
+
+        Movie m = new Movie();
+        m.setName("A volta dos que não foram");
+        m.setStock(1);
+        m.setPrice(14.90);
+
+//        User u = new User();
+//        u.setName("Marcos");
+
+        //Ação
+        try {
+            rs.rentMovie(null, m);
+            Assert.fail("User founded");
+        } catch (RentalException e) {
+            Assert.assertThat(e.getMessage(), CoreMatchers.is("User not found"));
+        }
+    }
+
+    @Test
+    public void rentalTest_movieNotFound() throws MovieWithoutStockException, RentalException {
+
+        //Cenário
+        RentalService rs = new RentalService();
+
+//        Movie m = new Movie();
+//        m.setName("A volta dos que não foram");
+//        m.setStock(1);
+//        m.setPrice(14.90);
+
+        User u = new User();
+        u.setName("Marcos");
+
+        expectedException.expect(RentalException.class);
+        expectedException.expectMessage("Movie not found");
+
+        //Ação
+        rs.rentMovie(u, null);
     }
 }

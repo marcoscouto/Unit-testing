@@ -3,6 +3,8 @@ package com.marcoscouto.services;
 import com.marcoscouto.entities.Movie;
 import com.marcoscouto.entities.Rental;
 import com.marcoscouto.entities.User;
+import com.marcoscouto.exceptions.MovieWithoutStockException;
+import com.marcoscouto.exceptions.RentalException;
 import com.marcoscouto.utils.DateUtils;
 import org.junit.Assert;
 import org.junit.Test;
@@ -13,9 +15,13 @@ import static com.marcoscouto.utils.DateUtils.addDays;
 
 public class RentalService {
 
-    public Rental rentMovie(User user, Movie movie) throws Exception {
+    public Rental rentMovie(User user, Movie movie) throws MovieWithoutStockException, RentalException {
 
-        if (movie.getStock() == 0) throw new Exception("Film without stock");
+        if (user == null) throw new RentalException("User not found");
+
+        if (movie == null) throw new RentalException("Movie not found");
+
+        if (movie.getStock() == 0) throw new MovieWithoutStockException("Film without stock");
 
         Rental rental = new Rental();
         rental.setMovie(movie);
