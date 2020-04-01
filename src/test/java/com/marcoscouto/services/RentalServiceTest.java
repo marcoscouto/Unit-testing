@@ -45,6 +45,7 @@ public class RentalServiceTest {
 
     @Test
     public void test() throws Exception {
+        Assume.assumeFalse(DateUtils.verifyDayOfWeek(new Date(), Calendar.SATURDAY));
 
         //Cenário
         User user = new User("Marcos");
@@ -240,7 +241,10 @@ public class RentalServiceTest {
     }
 
     @Test
+   // @Ignore("Test ignored, it works on saturdays")
     public void shouldGiveBackMovieOnMondayInsteadSunday() throws MovieWithoutStockException, RentalException {
+        Assume.assumeTrue(DateUtils.verifyDayOfWeek(new Date(), Calendar.SATURDAY));
+
         //Cenário
         User user = new User("Marcos");
         List<Movie> movies = Arrays.asList(
