@@ -11,7 +11,10 @@ import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 public class RentalServiceTest {
 
@@ -47,21 +50,21 @@ public class RentalServiceTest {
     public void test() throws Exception {
 
         //Cenário
-        User u = new User();
-        u.setName("Marcos");
+        User user = new User("Marcos");
 
-        Movie m = new Movie();
-        m.setName("A volta dos que não foram");
-        m.setStock(1);
-        m.setPrice(14.90);
+        List<Movie> movies = new ArrayList<>();
+        movies.addAll(Arrays.asList(
+                new Movie("A volta dos que não foram", 1, 14.9),
+                new Movie("As tranças do rei careca", 2, 10.7)
+        ));
 
         //Ação
 
-        Rental rental = rs.rentMovie(u, m);
+        Rental rental = rs.rentMovie(user, movies);
 
         //Verificação
 
-        errorCollector.checkThat( rental.getPrice().doubleValue(), CoreMatchers.is(14.9));
+        errorCollector.checkThat(rental.getPrice().doubleValue(), CoreMatchers.is(25.6));
         errorCollector.checkThat(DateUtils.isSameDate(rental.getInitialDate(), new Date()), CoreMatchers.is(true));
         errorCollector.checkThat(DateUtils.isSameDate(rental.getFinalDate(), DateUtils.obtaingDateWithDaysDifference(1)), CoreMatchers.is(true));
 
@@ -71,35 +74,37 @@ public class RentalServiceTest {
     public void rentalTest_movieWithoutStock() throws Exception {
 
         //Cenário
-        User u = new User();
-        u.setName("Marcos");
+        User user = new User("Marcos");
 
-        Movie m = new Movie();
-        m.setName("A volta dos que não foram");
-        m.setStock(0);
-        m.setPrice(14.90);
+        List<Movie> movies = new ArrayList<>();
+        movies.addAll(Arrays.asList(
+                new Movie("A volta dos que não foram", 0, 14.9),
+                new Movie("As tranças do rei careca", 0, 10.7)
+        ));
+
 
         //Ação
 
-        rs.rentMovie(u, m);
+        rs.rentMovie(user, movies);
     }
 
     @Test // Forma Robusta
     public void rentalTest_movieWithoutStock2() {
 
         //Cenário
-        User u = new User();
-        u.setName("Marcos");
+        User user = new User("Marcos");
 
-        Movie m = new Movie();
-        m.setName("A volta dos que não foram");
-        m.setStock(0);
-        m.setPrice(14.90);
+        List<Movie> movies = new ArrayList<>();
+        movies.addAll(Arrays.asList(
+                new Movie("A volta dos que não foram", 0, 14.9),
+                new Movie("As tranças do rei careca", 0, 10.7)
+        ));
+
 
         //Ação
 
         try {
-            rs.rentMovie(u, m);
+            rs.rentMovie(user, movies);
             Assert.fail("Should be generate an exception");
         } catch (Exception e) {
             Assert.assertThat(e.getMessage(), CoreMatchers.is("Film without stock"));
@@ -110,36 +115,36 @@ public class RentalServiceTest {
     public void rentalTest_movieWithoutStock3() throws Exception {
 
         //Cenário
-        User u = new User();
-        u.setName("Marcos");
+        User user = new User("Marcos");
 
-        Movie m = new Movie();
-        m.setName("A volta dos que não foram");
-        m.setStock(0);
-        m.setPrice(14.90);
+        List<Movie> movies = new ArrayList<>();
+        movies.addAll(Arrays.asList(
+                new Movie("A volta dos que não foram", 0, 14.9),
+                new Movie("As tranças do rei careca", 0, 10.7)
+        ));
+
 
         expectedException.expect(Exception.class);
         expectedException.expectMessage("Film without stock");
 
         //Ação
-        rs.rentMovie(u, m);
+        rs.rentMovie(user, movies);
     }
 
     @Test
     public void rentalTest_userNotFound() throws MovieWithoutStockException {
 
         //Cenário
-        Movie m = new Movie();
-        m.setName("A volta dos que não foram");
-        m.setStock(1);
-        m.setPrice(14.90);
+        List<Movie> movies = new ArrayList<>();
+        movies.addAll(Arrays.asList(
+                new Movie("A volta dos que não foram", 1, 14.9),
+                new Movie("As tranças do rei careca", 2, 10.7)
+        ));
 
-//        User u = new User();
-//        u.setName("Marcos");
 
         //Ação
         try {
-            rs.rentMovie(null, m);
+            rs.rentMovie(null, movies);
             Assert.fail("User founded");
         } catch (RentalException e) {
             Assert.assertThat(e.getMessage(), CoreMatchers.is("User not found"));
@@ -150,18 +155,12 @@ public class RentalServiceTest {
     public void rentalTest_movieNotFound() throws MovieWithoutStockException, RentalException {
 
         //Cenário
-//        Movie m = new Movie();
-//        m.setName("A volta dos que não foram");
-//        m.setStock(1);
-//        m.setPrice(14.90);
-
-        User u = new User();
-        u.setName("Marcos");
+        User user = new User("Marcos");
 
         expectedException.expect(RentalException.class);
         expectedException.expectMessage("Movie not found");
 
         //Ação
-        rs.rentMovie(u, null);
+        rs.rentMovie(user, null);
     }
 }

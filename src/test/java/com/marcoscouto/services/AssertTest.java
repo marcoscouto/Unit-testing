@@ -1,7 +1,6 @@
 package com.marcoscouto.services;
 
 import com.marcoscouto.entities.User;
-import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -29,13 +28,10 @@ public class AssertTest {
         Assert.assertTrue("Bola".equalsIgnoreCase("Bola"));
         Assert.assertTrue("bola".startsWith("bo"));
 
-        User u1 = new User();
-        User u2 = new User();
+        User u1 = new User("Marcos");
+        User u2 = new User("Marcos");
         User u3 = u2;
         User u4 = null;
-
-        u1.setName("Marcos");
-        u2.setName("Marcos");
 
         Assert.assertEquals(u1, u2); // Error if doesn't have equals
         Assert.assertEquals(u2, u3);
