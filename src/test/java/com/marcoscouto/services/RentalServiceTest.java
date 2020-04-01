@@ -11,10 +11,7 @@ import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class RentalServiceTest {
 
@@ -240,6 +237,22 @@ public class RentalServiceTest {
         //Verificação
         //4+4+3+2+1=14
         Assert.assertThat(rental.getPrice().doubleValue(), CoreMatchers.is(14.0));
+    }
+
+    @Test
+    public void shouldGiveBackMovieOnMondayInsteadSunday() throws MovieWithoutStockException, RentalException {
+        //Cenário
+        User user = new User("Marcos");
+        List<Movie> movies = Arrays.asList(
+                new Movie("Movie 1", 2, 4.0)
+        );
+
+        //Ação
+        Rental rental = rs.rentMovie(user, movies);
+
+        //Verificação
+        boolean isMonday = DateUtils.verifyDayOfWeek(rental.getFinalDate(), Calendar.MONDAY);
+        Assert.assertTrue(isMonday);
     }
 
 }

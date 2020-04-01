@@ -5,7 +5,9 @@ import com.marcoscouto.entities.Rental;
 import com.marcoscouto.entities.User;
 import com.marcoscouto.exceptions.MovieWithoutStockException;
 import com.marcoscouto.exceptions.RentalException;
+import com.marcoscouto.utils.DateUtils;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -45,6 +47,9 @@ public class RentalService {
         //Entrega no dia seguinte
         Date returnDate = new Date();
         returnDate = addDays(returnDate, 1);
+        if(DateUtils.verifyDayOfWeek(returnDate, Calendar.SUNDAY)){
+            returnDate = addDays(returnDate, 1);
+        }
         rental.setFinalDate(returnDate);
 
         //Salvando a locacao...
