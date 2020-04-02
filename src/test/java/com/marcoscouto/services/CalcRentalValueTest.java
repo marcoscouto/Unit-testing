@@ -1,5 +1,7 @@
 package com.marcoscouto.services;
 
+import com.marcoscouto.dao.RentalDAO;
+import com.marcoscouto.dao.RentalDAOFake;
 import com.marcoscouto.entities.Movie;
 import com.marcoscouto.entities.Rental;
 import com.marcoscouto.entities.User;
@@ -11,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mockito.Mockito;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,7 +37,9 @@ public class CalcRentalValueTest {
 
     @Before
     public void setup() {
+        RentalDAO dao = Mockito.mock(RentalDAO.class);
         rs = new RentalService();
+        rs.setRentalDAO(dao);
     }
 
     private static Movie movie1 = oneMovie().now();

@@ -15,6 +15,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mockito;
 
 import java.util.*;
 
@@ -31,7 +32,7 @@ public class RentalServiceTest {
     @Before
     public void setup() {
         rs = new RentalService();
-        RentalDAO dao = new RentalDAOFake();
+        RentalDAO dao = Mockito.mock(RentalDAO.class);
         rs.setRentalDAO(dao);
     }
 
