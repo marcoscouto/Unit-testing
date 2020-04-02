@@ -2,6 +2,8 @@ package com.marcoscouto.services;
 
 import com.marcoscouto.builders.MovieBuilder;
 import com.marcoscouto.builders.UserBuilder;
+import com.marcoscouto.dao.RentalDAO;
+import com.marcoscouto.dao.RentalDAOFake;
 import com.marcoscouto.entities.Movie;
 import com.marcoscouto.entities.Rental;
 import com.marcoscouto.entities.User;
@@ -29,6 +31,8 @@ public class RentalServiceTest {
     @Before
     public void setup() {
         rs = new RentalService();
+        RentalDAO dao = new RentalDAOFake();
+        rs.setRentalDAO(dao);
     }
 
     @After

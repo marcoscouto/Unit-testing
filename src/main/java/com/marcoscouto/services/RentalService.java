@@ -1,5 +1,6 @@
 package com.marcoscouto.services;
 
+import com.marcoscouto.dao.RentalDAO;
 import com.marcoscouto.entities.Movie;
 import com.marcoscouto.entities.Rental;
 import com.marcoscouto.entities.User;
@@ -14,6 +15,8 @@ import java.util.List;
 import static com.marcoscouto.utils.DateUtils.addDays;
 
 public class RentalService {
+
+    private RentalDAO rentalDAO;
 
     public Rental rentMovie(User user, List<Movie> movies) throws MovieWithoutStockException, RentalException {
 
@@ -53,9 +56,13 @@ public class RentalService {
         rental.setFinalDate(returnDate);
 
         //Salvando a locacao...
-        //TODO adicionar método para salvar
+        rentalDAO.save(rental);
 
         return rental;
+    }
+
+    public void setRentalDAO(RentalDAO rentalDAO){
+        this.rentalDAO = rentalDAO;
     }
 
 }
