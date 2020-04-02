@@ -5,6 +5,7 @@ import com.marcoscouto.entities.Rental;
 import com.marcoscouto.entities.User;
 import com.marcoscouto.exceptions.MovieWithoutStockException;
 import com.marcoscouto.exceptions.RentalException;
+import com.marcoscouto.matchers.CustomMatchers;
 import com.marcoscouto.utils.DateUtils;
 import org.hamcrest.CoreMatchers;
 import org.junit.*;
@@ -256,7 +257,10 @@ public class RentalServiceTest {
 
         //Verificação
         boolean isMonday = DateUtils.verifyDayOfWeek(rental.getFinalDate(), Calendar.MONDAY);
-        Assert.assertTrue(isMonday);
+        //Assert.assertTrue(isMonday);
+//        Assert.assertThat(rental.getFinalDate(), new DayOfWeekMatcher(Calendar.MONDAY));
+//        Assert.assertThat(rental.getFinalDate(), CustomMatchers.whatDay(Calendar.MONDAY));
+        Assert.assertThat(rental.getFinalDate(), CustomMatchers.atMonday());
     }
 
 }
