@@ -1,5 +1,7 @@
 package com.marcoscouto.services;
 
+import com.marcoscouto.builders.MovieBuilder;
+import com.marcoscouto.builders.UserBuilder;
 import com.marcoscouto.entities.Movie;
 import com.marcoscouto.entities.Rental;
 import com.marcoscouto.entities.User;
@@ -49,12 +51,11 @@ public class RentalServiceTest {
         Assume.assumeFalse(DateUtils.verifyDayOfWeek(new Date(), Calendar.SATURDAY));
 
         //Cenário
-        User user = new User("Marcos");
+        User user = UserBuilder.oneUser().now();
 
         List<Movie> movies = new ArrayList<>();
         movies.addAll(Arrays.asList(
-                new Movie("A volta dos que não foram", 1, 14.9),
-                new Movie("As tranças do rei careca", 2, 10.7)
+                MovieBuilder.oneMovie().price(5.0).now()
         ));
 
         //Ação
@@ -63,7 +64,7 @@ public class RentalServiceTest {
 
         //Verificação
 
-        errorCollector.checkThat(rental.getPrice().doubleValue(), CoreMatchers.is(25.6));
+        errorCollector.checkThat(rental.getPrice().doubleValue(), CoreMatchers.is(5.0));
 //        errorCollector.checkThat(DateUtils.isSameDate(rental.getInitialDate(), new Date()), CoreMatchers.is(true));
         errorCollector.checkThat(rental.getInitialDate(), CustomMatchers.isToday());
 //        errorCollector.checkThat(DateUtils.isSameDate(rental.getFinalDate(), DateUtils.obtaingDateWithDaysDifference(1)), CoreMatchers.is(true));
@@ -74,12 +75,11 @@ public class RentalServiceTest {
     public void shouldThrowExceptionByRentFilmWithoutStock() throws Exception {
 
         //Cenário
-        User user = new User("Marcos");
+        User user = UserBuilder.oneUser().now();
 
         List<Movie> movies = new ArrayList<>();
         movies.addAll(Arrays.asList(
-                new Movie("A volta dos que não foram", 0, 14.9),
-                new Movie("As tranças do rei careca", 0, 10.7)
+                MovieBuilder.oneMovie().noStock().now()
         ));
 
 
@@ -92,12 +92,11 @@ public class RentalServiceTest {
     public void shouldThrowExceptionByRentFilmWithoutStock2() {
 
         //Cenário
-        User user = new User("Marcos");
+        User user = UserBuilder.oneUser().now();
 
         List<Movie> movies = new ArrayList<>();
         movies.addAll(Arrays.asList(
-                new Movie("A volta dos que não foram", 0, 14.9),
-                new Movie("As tranças do rei careca", 0, 10.7)
+                MovieBuilder.oneMovie().noStock().now()
         ));
 
 
@@ -115,12 +114,11 @@ public class RentalServiceTest {
     public void shouldThrowExceptionByRentFilmWithoutStock3() throws Exception {
 
         //Cenário
-        User user = new User("Marcos");
+        User user = UserBuilder.oneUser().now();
 
         List<Movie> movies = new ArrayList<>();
         movies.addAll(Arrays.asList(
-                new Movie("A volta dos que não foram", 0, 14.9),
-                new Movie("As tranças do rei careca", 0, 10.7)
+                MovieBuilder.oneMovie().movieWithoutStock().now()
         ));
 
 
@@ -137,8 +135,7 @@ public class RentalServiceTest {
         //Cenário
         List<Movie> movies = new ArrayList<>();
         movies.addAll(Arrays.asList(
-                new Movie("A volta dos que não foram", 1, 14.9),
-                new Movie("As tranças do rei careca", 2, 10.7)
+                MovieBuilder.oneMovie().now()
         ));
 
 
@@ -155,7 +152,7 @@ public class RentalServiceTest {
     public void notShouldRentMovieWithoutMovie() throws MovieWithoutStockException, RentalException {
 
         //Cenário
-        User user = new User("Marcos");
+        User user = UserBuilder.oneUser().now();
 
         expectedException.expect(RentalException.class);
         expectedException.expectMessage("Movie not found");
@@ -167,7 +164,7 @@ public class RentalServiceTest {
     @Test
     public void shouldPay25PercentLessFor3rdMovie() throws MovieWithoutStockException, RentalException {
         //Cenário
-        User user = new User("Marcos");
+        User user = UserBuilder.oneUser().now();
         List<Movie> movies = Arrays.asList(
                 new Movie("Movie 1", 2, 4.0),
                 new Movie("Movie 2", 2, 4.0),
@@ -185,7 +182,7 @@ public class RentalServiceTest {
     @Test
     public void shouldPay50PercentLessFor4thMovie() throws MovieWithoutStockException, RentalException {
         //Cenário
-        User user = new User("Marcos");
+        User user = UserBuilder.oneUser().now();
         List<Movie> movies = Arrays.asList(
                 new Movie("Movie 1", 2, 4.0),
                 new Movie("Movie 2", 2, 4.0),
@@ -204,7 +201,7 @@ public class RentalServiceTest {
     @Test
     public void shouldPay75PercentLessFor5thMovie() throws MovieWithoutStockException, RentalException {
         //Cenário
-        User user = new User("Marcos");
+        User user = UserBuilder.oneUser().now();
         List<Movie> movies = Arrays.asList(
                 new Movie("Movie 1", 2, 4.0),
                 new Movie("Movie 2", 2, 4.0),
@@ -224,7 +221,7 @@ public class RentalServiceTest {
     @Test
     public void shouldPay100PercentLessFor6thMovie() throws MovieWithoutStockException, RentalException {
         //Cenário
-        User user = new User("Marcos");
+        User user = UserBuilder.oneUser().now();
         List<Movie> movies = Arrays.asList(
                 new Movie("Movie 1", 2, 4.0),
                 new Movie("Movie 2", 2, 4.0),
@@ -248,7 +245,7 @@ public class RentalServiceTest {
         Assume.assumeTrue(DateUtils.verifyDayOfWeek(new Date(), Calendar.SATURDAY));
 
         //Cenário
-        User user = new User("Marcos");
+        User user = UserBuilder.oneUser().now();
         List<Movie> movies = Arrays.asList(
                 new Movie("Movie 1", 2, 4.0)
         );
