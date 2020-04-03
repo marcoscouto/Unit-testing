@@ -5,6 +5,7 @@ import com.marcoscouto.exceptions.DivisionNotSupportedException;
 public class Calculator {
 
     public int sum(int a, int b) {
+        System.out.println("Executing method sum...");
         return a + b;
     }
 
@@ -15,5 +16,9 @@ public class Calculator {
     public int division(int a, int b) throws DivisionNotSupportedException {
         if(b == 0) throw new DivisionNotSupportedException();
         return a / b;
+    }
+
+    public void print(){
+        System.out.println("Print Here");
     }
 }
