@@ -278,7 +278,7 @@ public class RentalServiceTest {
     }
 
     @Test
-    public void shouldNotRentMovieForUserNegative() throws MovieWithoutStockException {
+    public void shouldNotRentMovieForUserNegative() throws Exception {
         //Cenário
         User user = UserBuilder.oneUser().now();
         List<Movie> movies = Arrays.asList(MovieBuilder.oneMovie().now());
@@ -290,7 +290,7 @@ public class RentalServiceTest {
             rs.rentMovie(user, movies);
             //Verificação
             Assert.fail();
-        } catch (RentalException e) {
+        } catch (Exception e) {
             Assert.assertThat(e.getMessage(), CoreMatchers.is("User negative"));
         }
 
@@ -323,6 +323,24 @@ public class RentalServiceTest {
         Mockito.verify(email, Mockito.atLeast(2)).notifyDelay(user3);
         Mockito.verify(email, Mockito.never()).notifyDelay(user2);
         Mockito.verifyNoMoreInteractions(email);
+    }
+
+    @Test
+    public void shouldTreatSPCError() throws Exception {
+        //Cenário
+        User user = UserBuilder.oneUser().now();
+        List<Movie> movies = Arrays.asList(MovieBuilder.oneMovie().now());
+
+        Mockito.when(spc.isNegative(user)).thenThrow(new Exception("Falha catastrófica"));
+
+        //Verificação
+        expectedException.expect(RentalException.class);
+        expectedException.expectMessage("Problemas com SPC, tente novamente");
+
+        //Ação
+        rs.rentMovie(user, movies);
+
+
     }
 
 }

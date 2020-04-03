@@ -31,7 +31,15 @@ public class RentalService {
                 throw new MovieWithoutStockException("Film without stock");
         }
 
-        if (spcService.isNegative(user)) {
+        boolean negative;
+
+        try {
+            negative = spcService.isNegative(user);
+        } catch (Exception e) {
+            throw new RentalException("Problemas com SPC, tente novamente");
+        }
+
+        if (negative) {
             throw new RentalException("User negative");
         }
 
