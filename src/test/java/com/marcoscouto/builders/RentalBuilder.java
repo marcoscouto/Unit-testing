@@ -40,6 +40,12 @@ public class RentalBuilder {
         return this;
     }
 
+    public RentalBuilder late(){
+        rental.setInitialDate(DateUtils.obtaingDateWithDaysDifference(-4));
+        rental.setFinalDate(DateUtils.obtaingDateWithDaysDifference(-2));
+        return this;
+    }
+
     public Rental now(){
         return rental;
     }

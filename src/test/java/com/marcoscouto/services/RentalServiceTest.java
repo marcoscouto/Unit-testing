@@ -15,6 +15,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import java.util.*;
@@ -279,7 +280,7 @@ public class RentalServiceTest {
         User user = UserBuilder.oneUser().now();
         List<Movie> movies = Arrays.asList(MovieBuilder.oneMovie().now());
 
-        Mockito.when(spc.isNegative(user)).thenReturn(true);
+        Mockito.when(spc.isNegative(Mockito.any(User.class))).thenReturn(true);
 
         //Ação
         try {
@@ -298,13 +299,15 @@ public class RentalServiceTest {
     public void shouldSendEmail(){
         //Cenário
         User user = UserBuilder.oneUser().now();
+        User user2 = UserBuilder.oneUser().setNome("Usuario 2").now();
+        User user3 = UserBuilder.oneUser().setNome("Usuario 3").now();
         List<Rental> rentals =
                 Arrays.asList(
-                        RentalBuilder
-                        .oneRental()
-                        .setUser(user)
-                        .setFinalDate(DateUtils.obtaingDateWithDaysDifference(-2))
-                        .now());
+                        RentalBuilder.oneRental().setUser(user).late().now(),
+                        RentalBuilder.oneRental().setUser(user2).now(),
+                        RentalBuilder.oneRental().setUser(user3).late().now(),
+                        RentalBuilder.oneRental().setUser(user3).late().now()
+                );
 
         Mockito.when(dao.findRentalPending()).thenReturn(rentals);
 
@@ -312,7 +315,11 @@ public class RentalServiceTest {
         rs.notifyDelay();
 
         //Verificação
+        Mockito.verify(email, Mockito.times(3)).notifyDelay(Mockito.any(User.class));
         Mockito.verify(email).notifyDelay(user);
+        Mockito.verify(email, Mockito.atLeast(2)).notifyDelay(user3);
+        Mockito.verify(email, Mockito.never()).notifyDelay(user2);
+        Mockito.verifyNoMoreInteractions(email);
     }
 
 }

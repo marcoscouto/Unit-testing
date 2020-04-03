@@ -31,7 +31,7 @@ public class RentalService {
                 throw new MovieWithoutStockException("Film without stock");
         }
 
-        if(spcService.isNegative(user)){
+        if (spcService.isNegative(user)) {
             throw new RentalException("User negative");
         }
 
@@ -43,11 +43,20 @@ public class RentalService {
         int i = 0;
         for (Movie movie : movies) {
             switch (i) {
-                case 2: price += movie.getPrice() * 0.75; break;
-                case 3: price += movie.getPrice() * 0.50; break;
-                case 4: price += movie.getPrice() * 0.25; break;
-                case 5: price += 0; break;
-                default: price += movie.getPrice();
+                case 2:
+                    price += movie.getPrice() * 0.75;
+                    break;
+                case 3:
+                    price += movie.getPrice() * 0.50;
+                    break;
+                case 4:
+                    price += movie.getPrice() * 0.25;
+                    break;
+                case 5:
+                    price += 0;
+                    break;
+                default:
+                    price += movie.getPrice();
             }
             i++;
         }
@@ -56,7 +65,7 @@ public class RentalService {
         //Entrega no dia seguinte
         Date returnDate = new Date();
         returnDate = addDays(returnDate, 1);
-        if(DateUtils.verifyDayOfWeek(returnDate, Calendar.SUNDAY)){
+        if (DateUtils.verifyDayOfWeek(returnDate, Calendar.SUNDAY)) {
             returnDate = addDays(returnDate, 1);
         }
         rental.setFinalDate(returnDate);
@@ -67,22 +76,23 @@ public class RentalService {
         return rental;
     }
 
-    public void notifyDelay(){
+    public void notifyDelay() {
         List<Rental> rentals = rentalDAO.findRentalPending();
         rentals.forEach(x -> {
-            emailService.notifyDelay(x.getUser());
+            if (x.getFinalDate().before(new Date()))
+                emailService.notifyDelay(x.getUser());
         });
     }
 
-    public void setRentalDAO(RentalDAO rentalDAO){
+    public void setRentalDAO(RentalDAO rentalDAO) {
         this.rentalDAO = rentalDAO;
     }
 
-    public void setSpcService(SPCService spcService){
+    public void setSpcService(SPCService spcService) {
         this.spcService = spcService;
     }
 
-    public void setEmailService(EmailService emailService){
+    public void setEmailService(EmailService emailService) {
         this.emailService = emailService;
     }
 
