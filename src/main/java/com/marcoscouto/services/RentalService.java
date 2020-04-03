@@ -17,6 +17,8 @@ import static com.marcoscouto.utils.DateUtils.addDays;
 public class RentalService {
 
     private RentalDAO rentalDAO;
+    private SPCService spcService;
+    private EmailService emailService;
 
     public Rental rentMovie(User user, List<Movie> movies) throws MovieWithoutStockException, RentalException {
 
@@ -27,6 +29,10 @@ public class RentalService {
         for (Movie movie : movies) {
             if (movie.getStock() == 0)
                 throw new MovieWithoutStockException("Film without stock");
+        }
+
+        if(spcService.isNegative(user)){
+            throw new RentalException("User negative");
         }
 
         Rental rental = new Rental();
@@ -61,8 +67,23 @@ public class RentalService {
         return rental;
     }
 
+    public void notifyDelay(){
+        List<Rental> rentals = rentalDAO.findRentalPending();
+        rentals.forEach(x -> {
+            emailService.notifyDelay(x.getUser());
+        });
+    }
+
     public void setRentalDAO(RentalDAO rentalDAO){
         this.rentalDAO = rentalDAO;
+    }
+
+    public void setSpcService(SPCService spcService){
+        this.spcService = spcService;
+    }
+
+    public void setEmailService(EmailService emailService){
+        this.emailService = emailService;
     }
 
 }

@@ -1,9 +1,9 @@
 package com.marcoscouto.services;
 
 import com.marcoscouto.builders.MovieBuilder;
+import com.marcoscouto.builders.RentalBuilder;
 import com.marcoscouto.builders.UserBuilder;
 import com.marcoscouto.dao.RentalDAO;
-import com.marcoscouto.dao.RentalDAOFake;
 import com.marcoscouto.entities.Movie;
 import com.marcoscouto.entities.Rental;
 import com.marcoscouto.entities.User;
@@ -22,6 +22,9 @@ import java.util.*;
 public class RentalServiceTest {
 
     private RentalService rs;
+    private RentalDAO dao;
+    private SPCService spc;
+    private EmailService email;
 
     @Rule
     public ErrorCollector errorCollector = new ErrorCollector();
@@ -32,8 +35,12 @@ public class RentalServiceTest {
     @Before
     public void setup() {
         rs = new RentalService();
-        RentalDAO dao = Mockito.mock(RentalDAO.class);
+        dao = Mockito.mock(RentalDAO.class);
         rs.setRentalDAO(dao);
+        spc = Mockito.mock(SPCService.class);
+        rs.setSpcService(spc);
+        email = Mockito.mock(EmailService.class);
+        rs.setEmailService(email);
     }
 
     @After
@@ -245,7 +252,7 @@ public class RentalServiceTest {
     }
 
     @Test
-   // @Ignore("Test ignored, it works on saturdays")
+    // @Ignore("Test ignored, it works on saturdays")
     public void shouldGiveBackMovieOnMondayInsteadSunday() throws MovieWithoutStockException, RentalException {
         Assume.assumeTrue(DateUtils.verifyDayOfWeek(new Date(), Calendar.SATURDAY));
 
@@ -264,6 +271,48 @@ public class RentalServiceTest {
 //        Assert.assertThat(rental.getFinalDate(), new DayOfWeekMatcher(Calendar.MONDAY));
 //        Assert.assertThat(rental.getFinalDate(), CustomMatchers.whatDay(Calendar.MONDAY));
         Assert.assertThat(rental.getFinalDate(), CustomMatchers.atMonday());
+    }
+
+    @Test
+    public void shouldNotRentMovieForUserNegative() throws MovieWithoutStockException {
+        //Cenário
+        User user = UserBuilder.oneUser().now();
+        List<Movie> movies = Arrays.asList(MovieBuilder.oneMovie().now());
+
+        Mockito.when(spc.isNegative(user)).thenReturn(true);
+
+        //Ação
+        try {
+            rs.rentMovie(user, movies);
+            //Verificação
+            Assert.fail();
+        } catch (RentalException e) {
+            Assert.assertThat(e.getMessage(), CoreMatchers.is("User negative"));
+        }
+
+
+        Mockito.verify(spc).isNegative(user);
+    }
+
+    @Test
+    public void shouldSendEmail(){
+        //Cenário
+        User user = UserBuilder.oneUser().now();
+        List<Rental> rentals =
+                Arrays.asList(
+                        RentalBuilder
+                        .oneRental()
+                        .setUser(user)
+                        .setFinalDate(DateUtils.obtaingDateWithDaysDifference(-2))
+                        .now());
+
+        Mockito.when(dao.findRentalPending()).thenReturn(rentals);
+
+        //Ação
+        rs.notifyDelay();
+
+        //Verificação
+        Mockito.verify(email).notifyDelay(user);
     }
 
 }
