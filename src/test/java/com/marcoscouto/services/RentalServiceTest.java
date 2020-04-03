@@ -15,10 +15,7 @@ import org.hamcrest.CoreMatchers;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.mockito.*;
 
 import java.util.*;
 
@@ -339,8 +336,22 @@ public class RentalServiceTest {
 
         //Ação
         rs.rentMovie(user, movies);
+    }
 
+    @Test
+    public void shouldExtendRental(){
+        //Cenário
+        Rental rental = RentalBuilder.oneRental().now();
 
+        //Ação
+        rs.extendRental(rental, 3);
+
+        //Verificação
+        ArgumentCaptor<Rental> argCapt = ArgumentCaptor.forClass(Rental.class);
+        Mockito.verify(dao).save(argCapt.capture());
+        Rental rentalResponse = argCapt.getValue();
+
+        Assert.assertThat(rentalResponse.getFinalDate(), CustomMatchers.isTodayWithDaysDifference(3));
     }
 
 }

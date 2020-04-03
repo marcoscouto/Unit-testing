@@ -92,4 +92,11 @@ public class RentalService {
         });
     }
 
+    public void extendRental(Rental rental, int days){
+
+        rental.setFinalDate(DateUtils.obtaingDateWithDaysDifference(days));
+        rentalDAO.save(rental);
+
+    }
+
 }
