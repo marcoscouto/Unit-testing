@@ -84,16 +84,4 @@ public class RentalService {
         });
     }
 
-    public void setRentalDAO(RentalDAO rentalDAO) {
-        this.rentalDAO = rentalDAO;
-    }
-
-    public void setSpcService(SPCService spcService) {
-        this.spcService = spcService;
-    }
-
-    public void setEmailService(EmailService emailService) {
-        this.emailService = emailService;
-    }
-
 }

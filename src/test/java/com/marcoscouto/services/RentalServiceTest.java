@@ -15,16 +15,25 @@ import org.hamcrest.CoreMatchers;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.util.*;
 
 public class RentalServiceTest {
 
+    @InjectMocks
     private RentalService rs;
+
+    @Mock
     private RentalDAO dao;
+
+    @Mock
     private SPCService spc;
+
+    @Mock
     private EmailService email;
 
     @Rule
@@ -35,13 +44,7 @@ public class RentalServiceTest {
 
     @Before
     public void setup() {
-        rs = new RentalService();
-        dao = Mockito.mock(RentalDAO.class);
-        rs.setRentalDAO(dao);
-        spc = Mockito.mock(SPCService.class);
-        rs.setSpcService(spc);
-        email = Mockito.mock(EmailService.class);
-        rs.setEmailService(email);
+        MockitoAnnotations.initMocks(this);
     }
 
     @After

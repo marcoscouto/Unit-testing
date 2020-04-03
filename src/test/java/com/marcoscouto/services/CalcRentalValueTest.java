@@ -12,7 +12,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -23,8 +26,14 @@ import static com.marcoscouto.builders.MovieBuilder.*;
 @RunWith(Parameterized.class)
 public class CalcRentalValueTest {
 
+    @InjectMocks
     private RentalService rs;
+
+    @Mock
     private SPCService spc;
+
+    @Mock
+    private RentalDAO dao;
 
     @Parameterized.Parameter
     public List<Movie> movies;
@@ -37,11 +46,7 @@ public class CalcRentalValueTest {
 
     @Before
     public void setup() {
-        RentalDAO dao = Mockito.mock(RentalDAO.class);
-        rs = new RentalService();
-        rs.setRentalDAO(dao);
-        spc = Mockito.mock(SPCService.class);
-        rs.setSpcService(spc);
+        MockitoAnnotations.initMocks(this);
     }
 
     private static Movie movie1 = oneMovie().now();
