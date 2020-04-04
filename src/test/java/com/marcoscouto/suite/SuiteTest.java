@@ -3,6 +3,7 @@ package com.marcoscouto.suite;
 import com.marcoscouto.services.CalcRentalValueTest;
 import com.marcoscouto.services.CalculatorTest;
 import com.marcoscouto.services.RentalServiceTest;
+import com.marcoscouto.services.RentalServiceTest_PowerMock;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -14,7 +15,8 @@ import static org.junit.runners.Suite.*;
 @SuiteClasses({
         CalculatorTest.class,
         CalcRentalValueTest.class,
-        RentalServiceTest.class
+        RentalServiceTest.class,
+        RentalServiceTest_PowerMock.class
 })
 public class SuiteTest {
 

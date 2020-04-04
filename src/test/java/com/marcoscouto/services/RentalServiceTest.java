@@ -15,17 +15,12 @@ import org.hamcrest.CoreMatchers;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
 import org.mockito.*;
 import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import java.util.*;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({RentalService.class})
 public class RentalServiceTest {
 
     @InjectMocks
@@ -65,39 +60,6 @@ public class RentalServiceTest {
     @AfterClass
     public static void tearDownClass() {
 //        System.out.println("After Class");
-    }
-
-    @Test
-    public void test() throws Exception {
-        //Assume.assumeTrue(DateUtils.verifyDayOfWeek(new Date(), Calendar.SATURDAY));
-
-        //Cenário
-        User user = UserBuilder.oneUser().now();
-
-        //PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(DateUtils.obtaingDate(03, 04, 2020));
-
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, 03);
-        calendar.set(Calendar.MONTH, Calendar.APRIL);
-        calendar.set(Calendar.YEAR, 2020);
-        PowerMockito.mockStatic(Calendar.class);
-        PowerMockito.when(Calendar.getInstance()).thenReturn(calendar);
-        List<Movie> movies = new ArrayList<>();
-        movies.addAll(Arrays.asList(
-                MovieBuilder.oneMovie().price(5.0).now()
-        ));
-
-        //Ação
-
-        Rental rental = rs.rentMovie(user, movies);
-
-        //Verificação
-
-        errorCollector.checkThat(rental.getPrice().doubleValue(), CoreMatchers.is(5.0));
-//        errorCollector.checkThat(rental.getInitialDate(), CustomMatchers.isToday());
-//        errorCollector.checkThat(rental.getFinalDate(), CustomMatchers.isTodayWithDaysDifference(1));
-        errorCollector.checkThat(DateUtils.isSameDate(rental.getInitialDate(), DateUtils.obtaingDate(03, 04, 2020)), CoreMatchers.is(true));
-        errorCollector.checkThat(DateUtils.isSameDate(rental.getFinalDate(), DateUtils.obtaingDate(04, 04, 2020)), CoreMatchers.is(true));
     }
 
     @Test(expected = MovieWithoutStockException.class) // Forma Elegante
@@ -269,39 +231,6 @@ public class RentalServiceTest {
     }
 
     @Test
-    // @Ignore("Test ignored, it works on saturdays")
-    public void shouldGiveBackMovieOnMondayInsteadSunday() throws Exception {
-
-        //Cenário
-        User user = UserBuilder.oneUser().now();
-        List<Movie> movies = Arrays.asList(
-                MovieBuilder.oneMovie().now()
-        );
-
-        //PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(DateUtils.obtaingDate(04, 04, 2020));
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, 04);
-        calendar.set(Calendar.MONTH, Calendar.APRIL);
-        calendar.set(Calendar.YEAR, 2020);
-        PowerMockito.mockStatic(Calendar.class);
-        PowerMockito.when(Calendar.getInstance()).thenReturn(calendar);
-
-        //Ação
-        Rental rental = rs.rentMovie(user, movies);
-
-        //Verificação
-        //boolean isMonday = DateUtils.verifyDayOfWeek(rental.getFinalDate(), Calendar.MONDAY);
-        //Assert.assertTrue(isMonday);
-//        Assert.assertThat(rental.getFinalDate(), new DayOfWeekMatcher(Calendar.MONDAY));
-//        Assert.assertThat(rental.getFinalDate(), CustomMatchers.whatDay(Calendar.MONDAY));
-        Assert.assertThat(rental.getFinalDate(), CustomMatchers.atMonday());
-        //PowerMockito.verifyNew(Date.class, Mockito.times(2)).withNoArguments();
-
-        PowerMockito.verifyStatic(Mockito.times(2));
-        Calendar.getInstance();
-    }
-
-    @Test
     public void shouldNotRentMovieForUserNegative() throws Exception {
         //Cenário
         User user = UserBuilder.oneUser().now();
@@ -395,18 +324,6 @@ public class RentalServiceTest {
         //Verificação
         Assert.assertThat(rental.getPrice(), CoreMatchers.is(1.0));
         PowerMockito.verifyPrivate(rs).invoke("calcRentalTotal", movies);
-    }
-
-    @Test
-    public void shouldCalculateRentalTotal() throws Exception {
-        //Cenário
-        List<Movie> movies = Arrays.asList(MovieBuilder.oneMovie().now());
-
-        //Ação
-        Double total = (Double) Whitebox.invokeMethod(rs, "calcRentalTotal", movies);
-
-        //Verificação
-        Assert.assertEquals(4.0,  total.doubleValue(), 0);
     }
 
 }

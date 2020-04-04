@@ -1,13 +1,11 @@
 package com.marcoscouto.services;
 
 import com.marcoscouto.exceptions.DivisionNotSupportedException;
-import com.marcoscouto.runners.ParallelRunner;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-@RunWith(ParallelRunner.class)
+
 public class CalculatorTest {
 
     private Calculator calculator;

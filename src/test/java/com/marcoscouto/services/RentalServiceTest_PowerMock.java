@@ -118,4 +118,19 @@ public class RentalServiceTest_PowerMock {
         Assert.assertEquals(4.0,  total.doubleValue(), 0);
     }
 
+    @Test
+    public void shouldRentMovieWithoutCalcTotal() throws Exception {
+        //Cenário
+        User user = UserBuilder.oneUser().now();
+        List<Movie> movies = Arrays.asList(MovieBuilder.oneMovie().now());
+
+        Mockito.doReturn(1.0).when(rs).calcRentalTotal(movies);
+
+        //Ação
+        Rental rental = rs.rentMovie(user, movies);
+
+        //Verificação
+        Assert.assertThat(rental.getPrice(), CoreMatchers.is(1.0));
+    }
+
 }

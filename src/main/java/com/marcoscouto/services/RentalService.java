@@ -67,7 +67,7 @@ public class RentalService {
         return new Date();
     }
 
-    private double calcRentalTotal(List<Movie> movies) {
+    protected double calcRentalTotal(List<Movie> movies) {
         double price = 0;
         int i = 0;
         for (Movie movie : movies) {
