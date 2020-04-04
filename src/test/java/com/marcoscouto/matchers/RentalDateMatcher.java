@@ -16,12 +16,12 @@ public class RentalDateMatcher extends TypeSafeMatcher<Date> {
 
     @Override
     protected boolean matchesSafely(Date date) {
-        return DateUtils.isSameDate(date, DateUtils.addDays(new Date(), dayPlus));
+        return DateUtils.isSameDate(date, DateUtils.obtaingDateWithDaysDifference(dayPlus));
     }
 
     @Override
     public void describeTo(Description description) {
-        Date date = DateUtils.addDays(new Date(), dayPlus);
+        Date date = DateUtils.obtaingDateWithDaysDifference(dayPlus);
         description.appendText("<"+date.toString()+">");
     }
 

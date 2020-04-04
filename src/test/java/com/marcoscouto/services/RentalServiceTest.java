@@ -15,10 +15,16 @@ import org.hamcrest.CoreMatchers;
 import org.junit.*;
 import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
 import org.mockito.*;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 
 import java.util.*;
 
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({RentalService.class, DateUtils.class})
 public class RentalServiceTest {
 
     @InjectMocks
@@ -61,10 +67,12 @@ public class RentalServiceTest {
 
     @Test
     public void test() throws Exception {
-        Assume.assumeFalse(DateUtils.verifyDayOfWeek(new Date(), Calendar.SATURDAY));
+        //Assume.assumeTrue(DateUtils.verifyDayOfWeek(new Date(), Calendar.SATURDAY));
 
         //Cenário
         User user = UserBuilder.oneUser().now();
+
+        PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(DateUtils.obtaingDate(03, 04, 2020));
 
         List<Movie> movies = new ArrayList<>();
         movies.addAll(Arrays.asList(
@@ -78,10 +86,10 @@ public class RentalServiceTest {
         //Verificação
 
         errorCollector.checkThat(rental.getPrice().doubleValue(), CoreMatchers.is(5.0));
-//        errorCollector.checkThat(DateUtils.isSameDate(rental.getInitialDate(), new Date()), CoreMatchers.is(true));
         errorCollector.checkThat(rental.getInitialDate(), CustomMatchers.isToday());
-//        errorCollector.checkThat(DateUtils.isSameDate(rental.getFinalDate(), DateUtils.obtaingDateWithDaysDifference(1)), CoreMatchers.is(true));
         errorCollector.checkThat(rental.getFinalDate(), CustomMatchers.isTodayWithDaysDifference(1));
+        errorCollector.checkThat(DateUtils.isSameDate(rental.getInitialDate(), DateUtils.obtaingDate(03, 04, 2020)), CoreMatchers.is(true));
+        errorCollector.checkThat(DateUtils.isSameDate(rental.getFinalDate(), DateUtils.obtaingDate(04, 04, 2020)), CoreMatchers.is(true));
     }
 
     @Test(expected = MovieWithoutStockException.class) // Forma Elegante
@@ -254,14 +262,15 @@ public class RentalServiceTest {
 
     @Test
     // @Ignore("Test ignored, it works on saturdays")
-    public void shouldGiveBackMovieOnMondayInsteadSunday() throws MovieWithoutStockException, RentalException {
-        Assume.assumeTrue(DateUtils.verifyDayOfWeek(new Date(), Calendar.SATURDAY));
+    public void shouldGiveBackMovieOnMondayInsteadSunday() throws Exception {
 
         //Cenário
         User user = UserBuilder.oneUser().now();
         List<Movie> movies = Arrays.asList(
                 new Movie("Movie 1", 2, 4.0)
         );
+
+        PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(DateUtils.obtaingDate(04, 04, 2020));
 
         //Ação
         Rental rental = rs.rentMovie(user, movies);
@@ -272,6 +281,7 @@ public class RentalServiceTest {
 //        Assert.assertThat(rental.getFinalDate(), new DayOfWeekMatcher(Calendar.MONDAY));
 //        Assert.assertThat(rental.getFinalDate(), CustomMatchers.whatDay(Calendar.MONDAY));
         Assert.assertThat(rental.getFinalDate(), CustomMatchers.atMonday());
+        PowerMockito.verifyNew(Date.class, Mockito.times(2)).withNoArguments();
     }
 
     @Test
