@@ -24,7 +24,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import java.util.*;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({RentalService.class, DateUtils.class})
+@PrepareForTest({RentalService.class})
 public class RentalServiceTest {
 
     @InjectMocks
@@ -72,8 +72,14 @@ public class RentalServiceTest {
         //Cenário
         User user = UserBuilder.oneUser().now();
 
-        PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(DateUtils.obtaingDate(03, 04, 2020));
+        //PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(DateUtils.obtaingDate(03, 04, 2020));
 
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 03);
+        calendar.set(Calendar.MONTH, Calendar.APRIL);
+        calendar.set(Calendar.YEAR, 2020);
+        PowerMockito.mockStatic(Calendar.class);
+        PowerMockito.when(Calendar.getInstance()).thenReturn(calendar);
         List<Movie> movies = new ArrayList<>();
         movies.addAll(Arrays.asList(
                 MovieBuilder.oneMovie().price(5.0).now()
@@ -86,8 +92,8 @@ public class RentalServiceTest {
         //Verificação
 
         errorCollector.checkThat(rental.getPrice().doubleValue(), CoreMatchers.is(5.0));
-        errorCollector.checkThat(rental.getInitialDate(), CustomMatchers.isToday());
-        errorCollector.checkThat(rental.getFinalDate(), CustomMatchers.isTodayWithDaysDifference(1));
+//        errorCollector.checkThat(rental.getInitialDate(), CustomMatchers.isToday());
+//        errorCollector.checkThat(rental.getFinalDate(), CustomMatchers.isTodayWithDaysDifference(1));
         errorCollector.checkThat(DateUtils.isSameDate(rental.getInitialDate(), DateUtils.obtaingDate(03, 04, 2020)), CoreMatchers.is(true));
         errorCollector.checkThat(DateUtils.isSameDate(rental.getFinalDate(), DateUtils.obtaingDate(04, 04, 2020)), CoreMatchers.is(true));
     }
@@ -267,21 +273,30 @@ public class RentalServiceTest {
         //Cenário
         User user = UserBuilder.oneUser().now();
         List<Movie> movies = Arrays.asList(
-                new Movie("Movie 1", 2, 4.0)
+                MovieBuilder.oneMovie().now()
         );
 
-        PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(DateUtils.obtaingDate(04, 04, 2020));
+        //PowerMockito.whenNew(Date.class).withNoArguments().thenReturn(DateUtils.obtaingDate(04, 04, 2020));
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 04);
+        calendar.set(Calendar.MONTH, Calendar.APRIL);
+        calendar.set(Calendar.YEAR, 2020);
+        PowerMockito.mockStatic(Calendar.class);
+        PowerMockito.when(Calendar.getInstance()).thenReturn(calendar);
 
         //Ação
         Rental rental = rs.rentMovie(user, movies);
 
         //Verificação
-        boolean isMonday = DateUtils.verifyDayOfWeek(rental.getFinalDate(), Calendar.MONDAY);
+        //boolean isMonday = DateUtils.verifyDayOfWeek(rental.getFinalDate(), Calendar.MONDAY);
         //Assert.assertTrue(isMonday);
 //        Assert.assertThat(rental.getFinalDate(), new DayOfWeekMatcher(Calendar.MONDAY));
 //        Assert.assertThat(rental.getFinalDate(), CustomMatchers.whatDay(Calendar.MONDAY));
         Assert.assertThat(rental.getFinalDate(), CustomMatchers.atMonday());
-        PowerMockito.verifyNew(Date.class, Mockito.times(2)).withNoArguments();
+        //PowerMockito.verifyNew(Date.class, Mockito.times(2)).withNoArguments();
+
+        PowerMockito.verifyStatic(Mockito.times(2));
+        Calendar.getInstance();
     }
 
     @Test

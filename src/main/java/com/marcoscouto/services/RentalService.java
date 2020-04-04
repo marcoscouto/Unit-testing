@@ -46,7 +46,7 @@ public class RentalService {
         Rental rental = new Rental();
         rental.setMovies(movies);
         rental.setUser(user);
-        rental.setInitialDate(new Date());
+        rental.setInitialDate(Calendar.getInstance().getTime());
         double price = 0;
         int i = 0;
         for (Movie movie : movies) {
@@ -71,7 +71,7 @@ public class RentalService {
         rental.setPrice(price);
 
         //Entrega no dia seguinte
-        Date returnDate = new Date();
+        Date returnDate = Calendar.getInstance().getTime();
         returnDate = addDays(returnDate, 1);
         if (DateUtils.verifyDayOfWeek(returnDate, Calendar.SUNDAY)) {
             returnDate = addDays(returnDate, 1);
