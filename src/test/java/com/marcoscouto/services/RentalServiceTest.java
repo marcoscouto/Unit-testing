@@ -48,6 +48,7 @@ public class RentalServiceTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
+        rs = PowerMockito.spy(rs);
     }
 
     @After
@@ -377,6 +378,22 @@ public class RentalServiceTest {
         Rental rentalResponse = argCapt.getValue();
 
         Assert.assertThat(rentalResponse.getFinalDate(), CustomMatchers.isTodayWithDaysDifference(3));
+    }
+
+    @Test
+    public void shouldRentMovieWithoutCalcTotal() throws Exception {
+        //Cenário
+        User user = UserBuilder.oneUser().now();
+        List<Movie> movies = Arrays.asList(MovieBuilder.oneMovie().now());
+
+        PowerMockito.doReturn(1.0).when(rs, "calcRentalTotal", movies);
+
+        //Ação
+        Rental rental = rs.rentMovie(user, movies);
+
+        //Verificação
+        Assert.assertThat(rental.getPrice(), CoreMatchers.is(1.0));
+        PowerMockito.verifyPrivate(rs).invoke("calcRentalTotal", movies);
     }
 
 }
