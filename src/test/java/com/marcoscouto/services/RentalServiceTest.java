@@ -20,6 +20,7 @@ import org.mockito.*;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import java.util.*;
 
@@ -394,6 +395,18 @@ public class RentalServiceTest {
         //Verificação
         Assert.assertThat(rental.getPrice(), CoreMatchers.is(1.0));
         PowerMockito.verifyPrivate(rs).invoke("calcRentalTotal", movies);
+    }
+
+    @Test
+    public void shouldCalculateRentalTotal() throws Exception {
+        //Cenário
+        List<Movie> movies = Arrays.asList(MovieBuilder.oneMovie().now());
+
+        //Ação
+        Double total = (Double) Whitebox.invokeMethod(rs, "calcRentalTotal", movies);
+
+        //Verificação
+        Assert.assertEquals(4.0,  total.doubleValue(), 0);
     }
 
 }
