@@ -46,11 +46,11 @@ public class RentalService {
         Rental rental = new Rental();
         rental.setMovies(movies);
         rental.setUser(user);
-        rental.setInitialDate(Calendar.getInstance().getTime());
+        rental.setInitialDate(getDate());
         rental.setPrice(calcRentalTotal(movies));
 
         //Entrega no dia seguinte
-        Date returnDate = Calendar.getInstance().getTime();
+        Date returnDate = getDate();
         returnDate = addDays(returnDate, 1);
         if (DateUtils.verifyDayOfWeek(returnDate, Calendar.SUNDAY)) {
             returnDate = addDays(returnDate, 1);
@@ -61,6 +61,10 @@ public class RentalService {
         rentalDAO.save(rental);
 
         return rental;
+    }
+
+    protected Date getDate() {
+        return new Date();
     }
 
     private double calcRentalTotal(List<Movie> movies) {
@@ -91,7 +95,7 @@ public class RentalService {
     public void notifyDelay() {
         List<Rental> rentals = rentalDAO.findRentalPending();
         rentals.forEach(x -> {
-            if (x.getFinalDate().before(new Date()))
+            if (x.getFinalDate().before(getDate()))
                 emailService.notifyDelay(x.getUser());
         });
     }

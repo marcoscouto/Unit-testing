@@ -5,7 +5,7 @@ import com.marcoscouto.exceptions.DivisionNotSupportedException;
 public class Calculator {
 
     public int sum(int a, int b) {
-        System.out.println("Executing method sum...");
+        //System.out.println("Executing method sum...");
         return a + b;
     }
 
